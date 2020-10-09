@@ -1,11 +1,23 @@
 function ge (selector, root) {
   return ga(selector, root)[0]
 }
+
 function ga (selector, root = document) {
   while (typeof root.querySelector !== 'function') {
     root = root.parentNode
   }
   return root.querySelectorAll(selector)
+}
+
+function isHidden(el) {
+  return (el.offsetParent === null)
+}
+
+function ce (tagName, attrs, innerHTML) {
+  const el = document.createElement(tagName)
+  attrs && Object.assign(el, attr)
+  innerHTML && (el.innerHTML = innerHTML)
+  return el
 }
 
 function shuffleArray(arr){

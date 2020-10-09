@@ -1,4 +1,4 @@
-(function (){
+;(function (){
   Object.assign(window, {
     clickOn,
     fillField
@@ -67,4 +67,4 @@
     }
     field.dispatchEvent(changeEvent)
   }
-})(this, document)
+})();

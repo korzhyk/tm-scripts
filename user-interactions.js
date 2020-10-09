@@ -1,4 +1,5 @@
-;(function (){
+// @grant unsafeWindow
+;(function (window){
   Object.assign(window, {
     clickOn,
     fillField
@@ -67,4 +68,4 @@
     }
     field.dispatchEvent(changeEvent)
   }
-})();
+})(unsafeWindow);

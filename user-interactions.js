@@ -1,12 +1,12 @@
-(function (global, doc){
-  Object.assign(global, {
+(function (){
+  Object.assign(window, {
     clickOn,
     fillField
   })
 
   let marker
   try {
-    marker = Object.assign(doc.createElement('div'), {
+    marker = Object.assign(document.createElement('div'), {
       style: `position: absolute; top: 0; left: 0;
       width: 19px;
       height: 19px;
@@ -15,7 +15,7 @@
       box-shadow: 0 0 0 2px rgba(255,255,255,.5);
       transform: translate(-50%,-50%)`
     })
-    doc.body.appendChild(marker)
+    document.body.appendChild(marker)
   } catch (e) { console.warn('Unable to create marker.') }
 
   function clickOn (el, options = [.5, .5]) {

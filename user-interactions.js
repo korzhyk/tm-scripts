@@ -1,6 +1,7 @@
 (function (global, doc){
   Object.assign(global, {
-    clickOn
+    clickOn,
+    fillField
   })
 
   let marker
@@ -40,5 +41,30 @@
     })
 
     el.dispatchEvent(event)
+  }
+
+  const nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set
+  const nativeCheckedValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'checked').set
+  const nativeSelectedValueSetter = Object.getOwnPropertyDescriptor(window.HTMLOptionElement.prototype, 'selected').set
+  const changeEvent = new Event('change', { bubbles: true })
+
+  function fillField (field, value) {
+    switch (field.type) {
+      case 'select-one':
+        for (let i = field.options.length - 1; i >= 0; i--) {
+          if (field.options[i].value == value) {
+            nativeSelectedValueSetter.call(field.options[i], !!value)
+            break
+          }
+        }
+        break
+      case 'checkbox':
+      case 'radio':
+        nativeCheckedValueSetter.call(field, !!value)
+        break
+      default:
+        nativeInputValueSetter.call(field, value)
+    }
+    field.dispatchEvent(changeEvent)
   }
 })(this, document)

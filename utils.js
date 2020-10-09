@@ -20,6 +20,17 @@ function ce (tagName, attrs, innerHTML) {
   return el
 }
 
+function guid(length = 22) {
+    const buf = []
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+        
+    for (let i = 0, l = chars.length; i < length; i++) {
+        buf[i] = chars.charAt(Math.floor(Math.random() * l))
+    }
+    
+    return buf.join('')
+}
+
 function shuffleArray(arr){
   return arr.sort(() => Math.floor(Math.random() * Math.floor(3)) - 1)
 }

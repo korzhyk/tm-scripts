@@ -44,12 +44,15 @@
     el.dispatchEvent(event)
   }
 
+  const nativeFocus = window.HTMLElement.prototype.focus
+  const nativeBlur = window.HTMLElement.prototype.blur
   const nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set
   const nativeCheckedValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'checked').set
   const nativeSelectedValueSetter = Object.getOwnPropertyDescriptor(window.HTMLOptionElement.prototype, 'selected').set
   const changeEvent = new Event('change', { bubbles: true })
 
   function fillField (field, value) {
+    nativeFocus.call(field)
     switch (field.type) {
       case 'select-one':
         for (let i = field.options.length - 1; i >= 0; i--) {
@@ -67,5 +70,6 @@
         nativeInputValueSetter.call(field, value)
     }
     field.dispatchEvent(changeEvent)
+    nativeBlur.call(field)
   }
 })(unsafeWindow);

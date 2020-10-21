@@ -2,6 +2,10 @@ function ge (selector, root) {
   return ga(selector, root)[0]
 }
 
+function _ge(...args) {
+  return ge.bind(this, ...args)
+}
+
 function ga (selector, root = document) {
   while (typeof root.querySelector !== 'function') {
     root = root.parentNode

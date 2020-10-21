@@ -27,7 +27,9 @@ function ce (tagName, attrs, innerHTML) {
 }
 
 function injectStyle (css) {
-  document.head.appendChild(ce('style', { type: 'text/css' }).appendChild(document.createTextNode(css)))
+  const style = ce('style', { type: 'text/css' })
+  style.appendChild(document.createTextNode(css))
+  document.head.appendChild(style)
 }
 
 function guid(length = 22) {

@@ -10,14 +10,20 @@ function ga (selector, root = document) {
 }
 
 function isHidden(el) {
-  return (el.offsetParent === null)
+  return el ? el.offsetParent === null : true
 }
 
 function ce (tagName, attrs, innerHTML) {
   const el = document.createElement(tagName)
-  attrs && Object.assign(el, attr)
-  innerHTML && (el.innerHTML = innerHTML)
+  attrs && Object.assign(el, attrs)
+  if (innerHTML) {
+    el.innerHTML = innerHTML
+  }
   return el
+}
+
+function injectStyle (css) {
+  document.head.appendChild(ce('style', { type: 'text/css' }).appendChild(document.createTextNode(css)))
 }
 
 function guid(length = 22) {
@@ -43,7 +49,7 @@ function randomItem (array) {
     return array ? array[array.length * Math.random() | 0] : null
 }
 
-function waitUntil (condition, repeatTimeout = 500, maxRetries = 120) {
+function waitUntil (condition, repeatTimeout = 500, maxRetries = 300) {
   return new Promise((resolve, reject) => {
     const cycle = () => {
       try {

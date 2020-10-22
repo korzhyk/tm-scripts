@@ -17,6 +17,10 @@ function isHidden(el) {
   return el ? el.offsetParent === null : true
 }
 
+function isVisible(el) {
+  return !isHidden(el)
+}
+
 function ce (tagName, attrs, innerHTML) {
   const el = document.createElement(tagName)
   attrs && Object.assign(el, attrs)

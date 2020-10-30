@@ -1,4 +1,5 @@
-;(function (){
+// @grant unsafeWindow
+;(function (window){
   Object.assign(window, {
     clickOn,
     fillField
@@ -82,4 +83,4 @@
     await userDelay()
     field.dispatchEvent(blurEvent)
   }
-})();
+})(unsafeWindow);

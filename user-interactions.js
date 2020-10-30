@@ -73,8 +73,7 @@
         let inputValue = ''
         for (var i = 0, l = chars.length; i < l; i++) {
           inputValue += chars[i]
-          await userDelay()
-          console.log('Input', inputValue)
+          await userDelay(50, 80)
           nativeInputValueSetter.call(field, inputValue)
           field.dispatchEvent(changeEvent)
         }

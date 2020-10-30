@@ -1,4 +1,3 @@
-// @grant unsafeWindow
 ;(function (window){
   Object.assign(window, {
     clickOn,
@@ -67,7 +66,13 @@
         nativeCheckedValueSetter.call(field, !!value)
         break
       default:
-        nativeInputValueSetter.call(field, value)
+        String(value).split().reduce(async (acc, c) => {
+          await new Promise(r => setTimeout(r, 250)
+          acc += c
+          nativeInputValueSetter.call(field, acc)
+          field.dispatchEvent(changeEvent)
+          return acc
+        }, '')
     }
     field.dispatchEvent(changeEvent)
     nativeBlur.call(field)

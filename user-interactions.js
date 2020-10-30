@@ -67,7 +67,7 @@
         break
       default:
         String(value).split().reduce(async (acc, c) => {
-          await new Promise(r => setTimeout(r, 250)
+          await new Promise(r => setTimeout(r, 250))
           acc += c
           nativeInputValueSetter.call(field, acc)
           field.dispatchEvent(changeEvent)

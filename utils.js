@@ -2,12 +2,12 @@ function _b (fn, ...args) {
   return fn.bind(this, ...args)
 }
 
-function ge (selector, root) {
-  return ga(selector, root)[0]
-}
-
 function _ge(...args) {
   return _b(ge, ...args)
+}
+
+function ge (selector, root) {
+  return ga(selector, root)[0]
 }
 
 function ga (selector, root = document) {

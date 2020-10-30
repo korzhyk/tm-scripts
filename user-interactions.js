@@ -1,4 +1,4 @@
-;(function (window){
+;(function (){
   Object.assign(window, {
     clickOn,
     fillField
@@ -43,15 +43,17 @@
     el.dispatchEvent(event)
   }
 
-  const nativeFocus = window.HTMLElement.prototype.focus
-  const nativeBlur = window.HTMLElement.prototype.blur
   const nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set
   const nativeCheckedValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'checked').set
   const nativeSelectedValueSetter = Object.getOwnPropertyDescriptor(window.HTMLOptionElement.prototype, 'selected').set
   const changeEvent = new Event('change', { bubbles: true })
+  const focusEvent = new Event('focus', { bubbles: true })
+  const blurEvent = new Event('blur', { bubbles: true })
+  const userDelay = (min = 80, max = 120) => new Promise(r => setTimeout(r, randomInteger(min, max)))
 
-  function fillField (field, value) {
-    nativeFocus.call(field)
+  async function fillField (field, value) {
+    field.dispatchEvent(focusEvent)
+    await userDelay()
     switch (field.type) {
       case 'select-one':
         for (let i = field.options.length - 1; i >= 0; i--) {
@@ -66,15 +68,18 @@
         nativeCheckedValueSetter.call(field, !!value)
         break
       default:
-        String(value).split().reduce(async (acc, c) => {
-          await new Promise(r => setTimeout(r, 250))
-          acc += c
-          nativeInputValueSetter.call(field, acc)
+        const chars = String(value).split('')
+        let inputValue = ''
+        for (var i = 0, l = chars.length; i < l; i++) {
+          inputValue += chars[i]
+          await userDelay()
+          console.log('Input', inputValue)
+          nativeInputValueSetter.call(field, inputValue)
           field.dispatchEvent(changeEvent)
-          return acc
-        }, '')
+        }
     }
     field.dispatchEvent(changeEvent)
-    nativeBlur.call(field)
+    await userDelay()
+    field.dispatchEvent(blurEvent)
   }
-})(unsafeWindow);
+})();

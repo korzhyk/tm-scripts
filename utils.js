@@ -10,7 +10,7 @@
       isVisible,
       injectStyle,
       find: findEl,
-      findAll: findEls,
+      findAll,
       Selector
     },
     Array: {
@@ -23,10 +23,8 @@
     Crypto: {
       guid,
     },
-    Promise: {
-      sleep,
-      until
-    },
+    Sleep,
+    Until,
     CheckInvoke,
     Debug
   }})
@@ -37,8 +35,8 @@
     return log
   }
 
-  function findEl (condition, parent) { return findAll(condition, parent)[0] }
-  function findEls (condition, parent) { return condition(parent) }
+  function findEl (condition, parent) { return findEls(condition, parent)[0] }
+  function findAll (condition, parent) { return condition(parent) }
 
   function Selector (selector) {
     return root => ga(selector, root)
@@ -119,7 +117,7 @@
       return array ? array[array.length * Math.random() | 0] : null
   }
 
-  function until (condition, repeatTimeout = 250, maxRetries = 100) {
+  function Until (condition, repeatTimeout = 250, maxRetries = 100) {
     return new Promise((resolve, reject) => {
       const cycle = () => {
         try {
@@ -138,7 +136,7 @@
     })
   }
 
-  function sleep (timeout=1) {
+  function Sleep (timeout=1) {
     return new Promise(resolve => setTimeout(resolve, timeout < 100 ? timeout * 1e3 : timeout))
   }
 

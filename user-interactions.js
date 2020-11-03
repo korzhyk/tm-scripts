@@ -8,6 +8,7 @@
       delay,
       fill,
       swipe,
+      tap,
       touchEvent
     }
   })
@@ -61,15 +62,19 @@
     field.dispatchEvent(blurEvent)
   }
 
-  async function click (target, options = [.5, .5]) {
+  function click (target) {
+    dbg.extend('click')('Click event at pos:', { x, y }, 'and target:', target)
+    target.dispatchEvent(clickEvent)
+  }
+
+  function tap (target, options = [.5, .5]) {
     const { left, top, width, height } = target.getBoundingClientRect()
     const [ offsetX, offsetY ] = options
     const x = calcOffset(width, offsetX, left)
     const y = calcOffset(height, offsetY, top)
-    dbg.extend('click')('Click event at pos:', { x, y }, 'and target:', target)
+    dbg.extend('touch')('Touch event at pos:', { x, y }, 'and target:', target)
     touchEvent(x, y, target, 'touchstart')
     touchEvent(x, y, target, 'touchend')
-    target.dispatchEvent(clickEvent)
   }
 
   function touchEvent(x, y, target, eventType) {

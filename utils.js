@@ -35,8 +35,8 @@
     return log
   }
 
-  function findEl (condition, parent) { return findAll(condition, parent)[0] }
-  function findAll (condition, parent) { return condition(parent) }
+  function findEl (condition, parent) { return () => condition(parent)[0] }
+  function findAll (condition, parent) { return () => condition(parent) }
 
   function Selector (selector) {
     return root => ga(selector, root)

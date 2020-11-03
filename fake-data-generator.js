@@ -33,11 +33,6 @@
       'hotmail.com',
       'protonmail.com',
       'protonmail.ch',
-      'mail.com',
-      'gmx.com',
-      'gmx.net',
-      'gmx.at',
-      'gmx.ch',
       'yandex.ua',
       'yandex.kz',
       'yandex.com',
@@ -47,9 +42,7 @@
       'mail.ru',
       'inbox.ru',
       'list.ru',
-      'bk.ru',
-      'zoho.com',
-      'zohomail.eu'
+      'bk.ru'
     ])
 
     return {

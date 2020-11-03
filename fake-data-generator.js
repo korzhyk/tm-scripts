@@ -24,7 +24,7 @@
   function getUserData() {
     const firstName = Utils.Array.random(fakeData.firstNames)
     const lastName = Utils.Array.random(fakeData.lastNames)
-    const userName = [firstName, Utils.Math.randomInteger(100, 999), lastName].join('')
+    const userName = [firstName, Utils.Math.random(100, 999), lastName].join('')
     const email = userName + '@' + Utils.Array.random([
       'gmail.com',
       'aol.com',
@@ -51,12 +51,12 @@
       password: generatePassword(16, 0),
       firstName: firstName,
       lastName: lastName,
-      zipCode: Utils.Math.randomInteger(10000, 50000),
+      zipCode: Utils.Math.random(10000, 50000),
       streetAddress: Utils.Array.random(fakeData.streets),
       city: Utils.Array.random(fakeData.cities),
       phoneCountry: '1',
-      phoneCode: Utils.Math.randomInteger(100, 999),
-      phoneNumber: Utils.Math.randomInteger(100, 999) + '-' + Utils.Math.randomInteger(1000, 9999)
+      phoneCode: Utils.Math.random(100, 999),
+      phoneNumber: Utils.Math.random(100, 999) + '-' + Utils.Math.random(1000, 9999)
     }
   }
 

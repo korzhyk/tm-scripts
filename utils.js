@@ -1,7 +1,5 @@
-// @require https://wzrd.in/standalone/debug@4.3.0
-// @grant unsafeWindow
 ;(function (window){
-  const dbg = debug('utils')
+  const dbg = Debug('utils')
   
   Object.assign(window, { Utils: {
     HTML: {
@@ -30,8 +28,14 @@
       until
     },
     CheckInvoke,
-    Debug (namespace) { return debug(namespace) }
+    Debug
   }})
+
+  function Debug (namespace = '') {
+    const log = console.log.bind(console, namespace)
+    log.extend = m => Debug(namespace + ':' + n)
+    return log
+  }
 
   function findEl (condition, parent) { return findAll(condition, parent)[0] }
   function findEls (condition, parent) { return condition(parent) }

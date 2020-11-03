@@ -1,5 +1,4 @@
 // @require https://raw.githubusercontent.com/korzhyk/tm-scripts/test/utils.js
-// @grant   unsafeWindow
 ;(function (window){
   const dbg = Utils.Debug('user_actions')
 

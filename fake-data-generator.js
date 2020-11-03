@@ -1,4 +1,3 @@
-// @grant unsafeWindow
 // @require https://raw.githubusercontent.com/korzhyk/tm-scripts/test/utils.js
 ;(function (window){
   Object.assign(window, { Faker: {

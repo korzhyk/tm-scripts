@@ -1,60 +1,46 @@
-// @grant unsafeWindow
+// @require https://raw.githubusercontent.com/korzhyk/tm-scripts/test/utils.js
+// @grant   unsafeWindow
 ;(function (window){
+  const dbg = Utils.Debug('user_actions')
+
   Object.assign(window, {
-    clickOn,
-    fillField
+    UserActions: {
+      click,
+      delay,
+      fill,
+      swipe,
+      touchEvent
+    }
   })
+  
+  dbg('UserActions was exposed!', window.UserActions)
 
-  let marker
-  try {
-    marker = Object.assign(document.createElement('div'), {
-      style: `position: absolute; top: 0; left: 0;
-      width: 19px;
-      height: 19px;
-      border-radius: 50%;
-      background: rgba(0,0,0,.4);
-      box-shadow: 0 0 0 2px rgba(255,255,255,.5);
-      transform: translate(-50%,-50%)`
-    })
-    document.body.appendChild(marker)
-  } catch (e) { console.warn('Unable to create marker.') }
+  const calcOffset = (value, offset = 0, base = 0) => {
+    if (!isFinite(offset)) {
+      offset = 0
+    }
+    return Math.floor(base + value + (offset < 1 && offset > -1 ? value * offset : offset))
+  }
 
-  function clickOn (el, options = [.5, .5]) {
-    const randPos = (pos, rand = Math.random()) => pos + (rand > .5 ? 1 : -1) * rand * 10
-    const { left, top, width, height } = el.getBoundingClientRect()
-    const [ offsetX, offsetY ] = options
-    const x = left + randPos(width * offsetX)
-    const y = top + randPos(height * offsetY)
-
-    marker && Object.assign(marker.style, { left: `${x}px`, top: `${y}px` })
-
-    const event = new MouseEvent('click', {
-      bubbles: true,
-      cancelable: true,
-      composed: true,
-      detail: 1,
-      clientX: x,
-      clientY: y,
-      screenX: x,
-      screenY: y,
-      view: window,
-      sourceCapabilities: new InputDeviceCapabilities({ firesTouchEvents: true })
-    })
-
-    el.dispatchEvent(event)
+  const randomPos = (radius = 4) => {
+    const rand = Math.random()
+    return Math.ceil((rand > .5 ? 1 : -1) * rand * radius)
   }
 
   const nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set
   const nativeCheckedValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'checked').set
   const nativeSelectedValueSetter = Object.getOwnPropertyDescriptor(window.HTMLOptionElement.prototype, 'selected').set
+  
   const changeEvent = new Event('change', { bubbles: true })
   const focusEvent = new Event('focus', { bubbles: true })
   const blurEvent = new Event('blur', { bubbles: true })
-  const userDelay = (min = 80, max = 120) => new Promise(r => setTimeout(r, randomInteger(min, max)))
 
-  async function fillField (field, value) {
+  function delay (min = 80, max = 120) { return new Promise(r => setTimeout(r, Utils.Math.random(min, max))) }
+
+  function fill (field, value) {
+    if (!field) return
+    dbg.extend('fill')('Fill', field.type, 'type field with:', value)
     field.dispatchEvent(focusEvent)
-    await userDelay()
     switch (field.type) {
       case 'select-one':
         for (let i = field.options.length - 1; i >= 0; i--) {
@@ -69,17 +55,66 @@
         nativeCheckedValueSetter.call(field, !!value)
         break
       default:
-        const chars = String(value).split('')
-        let inputValue = ''
-        for (var i = 0, l = chars.length; i < l; i++) {
-          inputValue += chars[i]
-          await userDelay(50, 80)
-          nativeInputValueSetter.call(field, inputValue)
-          field.dispatchEvent(changeEvent)
-        }
+        nativeInputValueSetter.call(field, value)
     }
     field.dispatchEvent(changeEvent)
-    await userDelay()
     field.dispatchEvent(blurEvent)
   }
+
+  async function click (target, options = [.5, .5]) {
+    const { left, top, width, height } = target.getBoundingClientRect()
+    const [ offsetX, offsetY ] = options
+    const x = calcOffset(width, offsetX, left)
+    const y = calcOffset(height, offsetY, top)
+    dbg.extend('click')('Click event at pos:', { x, y }, 'and target:', target)
+    touchEvent(x, y, target, 'touchstart')
+    await delay()
+    touchEvent(x, y, target, 'touchend')
+  }
+
+  function touchEvent(x, y, target, eventType) {
+    dbg.extend('touch')('Simulate', eventType, 'event at:', {x,y}, 'on target:', target)
+    const radius = randomPos()
+    const touchObj = new Touch({
+      identifier: Date.now(),
+      target,
+      clientX: x,
+      clientY: y,
+      radiusX: radius,
+      radiusY: radius,
+      rotationAngle: 10,
+      force: 0.5
+    })
+
+    const touchEvent = new TouchEvent(eventType, {
+      cancelable: true,
+      bubbles: true,
+      touches: [ touchObj ],
+      targetTouches: [],
+      changedTouches: [ touchObj ],
+      shiftKey: true
+    })
+
+    target.dispatchEvent(touchEvent)
+  }
+
+  async function swipe (target, origin = [.5, .5], end = [100, 100]) {
+    const [x, y] = end
+    const tRect = target.getBoundingClientRect()
+    const startX = Math.floor(tRect.x + tRect.width / 2)
+    const startY = Math.floor(tRect.y + tRect.height / 2)
+    const endX = startX + x
+    const endY = startY + y
+
+    dbg.extend('swipe')('Simulate user swipe on target:', target)
+
+    touchEvent(startX, startY, target, 'touchstart')
+    await delay()
+    touchEvent(startX, startY, target, 'touchmove')
+    await delay()
+    touchEvent(endX, endY, target, 'touchmove')
+    await delay()
+    touchEvent(endX, endY, target, 'touchend')
+  }
+
 })(unsafeWindow);

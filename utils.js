@@ -35,7 +35,7 @@
     return log
   }
 
-  function findEl (condition, parent) { return findEls(condition, parent)[0] }
+  function findEl (condition, parent) { return findAll(condition, parent)[0] }
   function findAll (condition, parent) { return condition(parent) }
 
   function Selector (selector) {

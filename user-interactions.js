@@ -30,6 +30,7 @@
   const nativeCheckedValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'checked').set
   const nativeSelectedValueSetter = Object.getOwnPropertyDescriptor(window.HTMLOptionElement.prototype, 'selected').set
   
+  const clickEvent = new Event('click', { bubbles: true })
   const changeEvent = new Event('change', { bubbles: true })
   const focusEvent = new Event('focus', { bubbles: true })
   const blurEvent = new Event('blur', { bubbles: true })
@@ -67,8 +68,8 @@
     const y = calcOffset(height, offsetY, top)
     dbg.extend('click')('Click event at pos:', { x, y }, 'and target:', target)
     touchEvent(x, y, target, 'touchstart')
-    await delay()
     touchEvent(x, y, target, 'touchend')
+    target.dispatchEvent(clickEvent)
   }
 
   function touchEvent(x, y, target, eventType) {

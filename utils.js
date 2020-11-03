@@ -31,7 +31,7 @@
 
   function Debug (namespace = '') {
     const log = console.log.bind(console, namespace)
-    log.extend = m => Debug(namespace + ':' + n)
+    log.extend = m => Debug(namespace + ':' + m)
     return log
   }
 

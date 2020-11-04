@@ -63,7 +63,7 @@
   }
 
   function click (target) {
-    dbg.extend('click')('Click event at pos:', { x, y }, 'and target:', target)
+    dbg.extend('click')('Click event on target:', target)
     target.dispatchEvent(clickEvent)
   }
 

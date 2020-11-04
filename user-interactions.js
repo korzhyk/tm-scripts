@@ -72,7 +72,9 @@
     const [ offsetX, offsetY ] = options
     const x = calcOffset(width, offsetX, left)
     const y = calcOffset(height, offsetY, top)
+
     dbg.extend('touch')('Touch event at pos:', { x, y }, 'and target:', target)
+
     touchEvent(x, y, target, 'touchstart')
     touchEvent(x, y, target, 'touchend')
   }
@@ -103,7 +105,7 @@
     target.dispatchEvent(touchEvent)
   }
 
-  async function swipe (target, origin = [.5, .5], end = [100, 100]) {
+  function swipe (target, origin = [.5, .5], end = [100, 100]) {
     const [x, y] = end
     const tRect = target.getBoundingClientRect()
     const startX = Math.floor(tRect.x + tRect.width / 2)
@@ -114,11 +116,8 @@
     dbg.extend('swipe')('Simulate user swipe on target:', target)
 
     touchEvent(startX, startY, target, 'touchstart')
-    await delay()
     touchEvent(startX, startY, target, 'touchmove')
-    await delay()
     touchEvent(endX, endY, target, 'touchmove')
-    await delay()
     touchEvent(endX, endY, target, 'touchend')
   }
 

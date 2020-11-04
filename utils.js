@@ -30,7 +30,15 @@
   }})
 
   function Debug (namespace = '') {
-    const log = console.log.bind(console, namespace)
+    const ts = Date.now()
+    const log = (...args) => console.log(
+      '%c +%s %c %s%c',
+      'background:dodgerblue;font-weight:600;color:lightcyan',
+      ((Date.now() - ts) / 1000) + 's',
+      'font-weight:600;color:darkblue',
+      namespace,
+      '',
+      ...args)
     log.extend = m => Debug(namespace + ':' + m)
     return log
   }

@@ -10,7 +10,6 @@
       isVisible,
       injectStyle,
       find: findEl,
-      findAll,
       Selector
     },
     Array: {
@@ -32,10 +31,10 @@
   function Debug (namespace = '') {
     const ts = Date.now()
     const log = (...args) => console.log(
-      '%c +%s %c %s%c',
+      '%c +%s %c %s %c',
       'background:dodgerblue;font-weight:600;color:lightcyan',
       ((Date.now() - ts) / 1000) + 's',
-      'font-weight:600;color:darkblue',
+      'background:lightcyan;font-weight:600;color:darkblue',
       namespace,
       '',
       ...args)
@@ -44,10 +43,9 @@
   }
 
   function findEl (condition, parent) { return () => condition(parent)[0] }
-  function findAll (condition, parent) { return () => condition(parent) }
 
   function Selector (selector) {
-    return root => ga(selector, root)
+    return Object.assign(root => ge(selector, root), { __selector: selector })
   }
 
   function CheckInvoke (name, value = true, validator = null) {
@@ -125,7 +123,7 @@
       return array ? array[array.length * Math.random() | 0] : null
   }
 
-  function Until (condition, repeatTimeout = 250, maxRetries = 100) {
+  function Until (condition, repeatTimeout = 300, maxRetries = 100) {
     return new Promise((resolve, reject) => {
       const cycle = () => {
         try {

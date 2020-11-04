@@ -40,7 +40,7 @@
 
   function fill (field, value) {
     if (!field) return
-    dbg.extend('fill')('Fill', field.type, 'type field with:', value)
+    dbg.extend('fill')('Fill "' + field.type + '" type field with:', value)
     field.dispatchEvent(focusEvent)
     switch (field.type) {
       case 'select-one':

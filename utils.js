@@ -124,19 +124,19 @@
   }
 
   function Until (condition, repeatTimeout = 300, maxRetries = 100) {
-    return new Promise((resolve, reject) => {
+    return new Promise(resolve => {
       const cycle = () => {
+        let result = null
         try {
-          const result = condition()
+          result = condition()
           if (result) return resolve(result)
         } catch (e) {
           dbg.extend('until')(e)
-          console.warn(e)
         }
         if (maxRetries--) {
           return setTimeout(cycle, repeatTimeout)
         }
-        reject(new Error('Condition fails', condition))
+        return resolve(result)
       }
       return cycle()
     })

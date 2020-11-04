@@ -131,7 +131,7 @@
           result = condition()
           if (result) return resolve(result)
         } catch (e) {
-          dbg.extend('until')(e)
+          dbg.extend('until')('Condition fail to execute', condition, e)
         }
         if (maxRetries--) {
           return setTimeout(cycle, repeatTimeout)

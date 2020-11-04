@@ -42,10 +42,10 @@
     return log
   }
 
-  function findEl (condition, parent) { return () => condition(parent)[0] }
+  function findEl (condition, parent) { return () => condition(parent) }
 
   function Selector (selector) {
-    return Object.assign(root => ga(selector, root), { __selector: selector })
+    return Object.assign(root => ge(selector, root), { __selector: selector })
   }
 
   function CheckInvoke (name, value = true, validator = null) {

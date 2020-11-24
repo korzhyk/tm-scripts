@@ -19,7 +19,12 @@
     if (!isFinite(offset)) {
       offset = 0
     }
-    return Math.floor(base + value + (offset < 1 && offset > -1 ? value * offset : offset))
+    if (offset && offset < 1 && offset > -1) {
+      value *= offset
+    } else {
+      value += offset
+    }
+    return Math.floor(value + base)
   }
 
   const randomPos = (radius = 4) => {
@@ -70,6 +75,7 @@
   function tap (target, options = [.5, .5]) {
     const { left, top, width, height } = target.getBoundingClientRect()
     const [ offsetX, offsetY ] = options
+
     const x = calcOffset(width, offsetX, left)
     const y = calcOffset(height, offsetY, top)
     

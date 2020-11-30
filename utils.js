@@ -1,41 +1,4 @@
 ;(function (window){
-  Object.assign(window, { Utils: {
-    HTML: {
-      isHidden,
-      isVisible,
-      injectStyle,
-      Selector
-    },
-    Array: {
-      shuffle: shuffleArray,
-      random: randomItem
-    },
-    Math: {
-      random: randomInteger
-    },
-    Crypto: {
-      guid,
-    },
-    sleep,
-    until,
-    invoked,
-    debug
-  }})
-
-  function debug (namespace = '') {
-    const ts = window.performance.now()
-    const log = (...args) => console.log(
-      '%c +%s %c %s %c',
-      'background:dodgerblue;font-weight:600;color:lightcyan',
-      ((window.performance.now() - ts) / 1000).toFixed(3) + 's',
-      'background:lightcyan;font-weight:600;color:darkblue',
-      namespace,
-      '',
-      ...args)
-    log.extend = m => Debug(namespace + ':' + m)
-    return log
-  }
-
   class Selector extends Promise {
     get [Symbol.toStringTag]() {
       return 'Selector'
@@ -77,6 +40,44 @@
       return this.then(el => el && el.getAttribute(name))
     }
   }
+  
+  Object.assign(window, { Utils: {
+    HTML: {
+      isHidden,
+      isVisible,
+      injectStyle,
+      Selector
+    },
+    Array: {
+      shuffle: shuffleArray,
+      random: randomItem
+    },
+    Math: {
+      random: randomInteger
+    },
+    Crypto: {
+      guid,
+    },
+    sleep,
+    until,
+    invoked,
+    debug
+  }})
+
+  function debug (namespace = '') {
+    const ts = window.performance.now()
+    const log = (...args) => console.log(
+      '%c +%s %c %s %c',
+      'background:dodgerblue;font-weight:600;color:lightcyan',
+      ((window.performance.now() - ts) / 1000).toFixed(3) + 's',
+      'background:lightcyan;font-weight:600;color:darkblue',
+      namespace,
+      '',
+      ...args)
+    log.extend = m => Debug(namespace + ':' + m)
+    return log
+  }
+
 
   function sleep (timeout=1) {
     return new Promise(resolve => setTimeout(resolve, timeout < 100 ? timeout * 1e3 : timeout))

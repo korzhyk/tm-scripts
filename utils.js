@@ -1,15 +1,9 @@
 ;(function (window){
-  const dbg = Debug('utils')
-  
   Object.assign(window, { Utils: {
     HTML: {
-      ce,
-      ge,
-      ga,
       isHidden,
       isVisible,
       injectStyle,
-      find: findEl,
       Selector
     },
     Array: {
@@ -22,18 +16,18 @@
     Crypto: {
       guid,
     },
-    Sleep,
-    Until,
-    CheckInvoke,
-    Debug
+    sleep,
+    until,
+    invoked,
+    debug
   }})
 
-  function Debug (namespace = '') {
-    const ts = Date.now()
+  function debug (namespace = '') {
+    const ts = window.performance.now()
     const log = (...args) => console.log(
       '%c +%s %c %s %c',
       'background:dodgerblue;font-weight:600;color:lightcyan',
-      ((Date.now() - ts) / 1000) + 's',
+      ((window.performance.now() - ts) / 1000).toFixed(3) + 's',
       'background:lightcyan;font-weight:600;color:darkblue',
       namespace,
       '',
@@ -42,39 +36,71 @@
     return log
   }
 
-  function findEl (condition, parent) { return () => condition(parent) }
-
-  function Selector (selector) {
-    return Object.assign(root => ge(selector, root), { __selector: selector })
-  }
-
-  function CheckInvoke (name, value = true, validator = null) {
-    let result = null
-    if (typeof validator === 'function') {
-      try {
-        result = validator()
-        console.info('Using validator function, result is:', result)
-        if (result) return result
-      } catch (e) { console.warn('Validator error:', e) }
-    } else if (sessionStorage[name]) {
-      console.info(`Stop execution of "${name}". Result exists:`, sessionStorage[name])
-      try {
-        result = JSON.parse(sessionStorage[name])
-      } catch (e) { console.warn('JSON parse error:', e) }
+  class Selector extends Promise {
+    get [Symbol.toStringTag]() {
+      return 'Selector'
     }
-    sessionStorage[name] = JSON.stringify(value)
-    return result
-  }
 
-  function ge (selector, root) {
-    return ga(selector, root)[0]
-  }
-
-  function ga (selector, root = document) {
-    while (typeof root.querySelector !== 'function') {
-      root = root.parentNode
+    static get [Symbol.species]() {
+      return Promise
     }
-    return root.querySelectorAll(selector)
+
+    static find(selector = '', parent = document) {
+      return Selector.resolve(parent && parent.querySelector(selector))
+    }
+
+    static findAll(selector = '', parent = document) {
+      return Promise.resolve(parent && parent.querySelectorAll(selector))
+    }
+
+    static wait(selector, ...args) {
+      return Selector.resolve(until(() => Selector.find(selector), ...args))
+    }
+
+    static waitAll(selector, ...args) {
+      return until(() => Selector.findAll(selector).then(els => els.length && els), ...args)
+    }
+
+    find(selector) {
+      return Selector.resolve(this.then(el => Selector.find(selector, el)))
+    }
+
+    findAll(selector) {
+      return this.then(el => Selector.findAll(selector, el))
+    }
+
+    text() {
+      return this.then(el => (el ? el.innerText : ''))
+    }
+
+    attr(name) {
+      return this.then(el => el && el.getAttribute(name))
+    }
+  }
+
+  function sleep (timeout=1) {
+    return new Promise(resolve => setTimeout(resolve, timeout < 100 ? timeout * 1e3 : timeout))
+  }
+
+  function until(fn, until = Infinity, timeout = 333) {
+    return new Promise(resolve => {
+      const frametime = 1000 / 30
+      if (until < frametime) {
+        until *= 1000 // if `until` < `frametime` at 30fps convert to seconds
+      }
+      let _t,
+        _a = isFinite(until) ? timeout : 0
+      setTimeout(async function _callback() {
+        const result = await fn()
+        if (result || _t > until) return resolve(result)
+        _t += _a
+        setTimeout(_callback, timeout)
+      }, (_t = frametime))
+    })
+  }
+
+  function invoked (name, value = true) {
+    return sessionStorage[name] ? null : (sessionStorage[name] = JSON.stringify(value))
   }
 
   function isHidden(el) {
@@ -100,7 +126,7 @@
     document.head.appendChild(style)
   }
 
-  function guid(length = 22) {
+  function guid(length = 16) {
       const buf = []
       const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
           
@@ -119,31 +145,8 @@
     return Math.round(min - 0.5 + Math.random() * (max - min + 1))
   }
 
-  function randomItem (array) {
-      return array ? array[array.length * Math.random() | 0] : null
-  }
-
-  function Until (condition, repeatTimeout = 300, maxRetries = 100) {
-    return new Promise(resolve => {
-      const cycle = () => {
-        let result = null
-        try {
-          result = condition()
-          if (result) return resolve(result)
-        } catch (e) {
-          dbg.extend('until')('Condition fail to execute', condition, e)
-        }
-        if (maxRetries--) {
-          return setTimeout(cycle, repeatTimeout)
-        }
-        return resolve(result)
-      }
-      return cycle()
-    })
-  }
-
-  function Sleep (timeout=1) {
-    return new Promise(resolve => setTimeout(resolve, timeout < 100 ? timeout * 1e3 : timeout))
+  function randomItem (items) {
+      return items ? items[items.length * Math.random() | 0] : null
   }
 
 })(unsafeWindow)

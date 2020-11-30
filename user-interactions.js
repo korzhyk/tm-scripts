@@ -1,6 +1,6 @@
 // @require https://raw.githubusercontent.com/korzhyk/tm-scripts/test/utils.js
 ;(function (window){
-  const dbg = Utils.Debug('user_actions')
+  const dbg = Utils.debug('user_actions')
 
   Object.assign(window, {
     UserActions: {
@@ -13,8 +13,6 @@
     }
   })
   
-  dbg('UserActions was exposed!', window.UserActions)
-
   const calcOffset = (value, offset = 0, base = 0) => {
     if (!isFinite(offset)) {
       offset = 0
@@ -41,11 +39,11 @@
   const focusEvent = new Event('focus', { bubbles: true })
   const blurEvent = new Event('blur', { bubbles: true })
 
-  function delay (min = 80, max = 120) { return new Promise(r => setTimeout(r, Utils.Math.random(min, max))) }
+  function delay (min = 80, max = 120) { return Utils.sleep(Utils.Math.random(min, max)) }
 
   function fill (field, value) {
     if (!field) return
-    dbg.extend('fill')('Fill "' + field.type + '" type field with:', value)
+    dbg.extend('fill')(`Fill "${field.type}" type field with:`, value)
     field.dispatchEvent(focusEvent)
     switch (field.type) {
       case 'select-one':
@@ -86,7 +84,6 @@
   }
 
   function touchEvent(x, y, target, eventType) {
-    dbg.extend('touch')('Simulate', eventType, 'event at:', {x,y}, 'on target:', target)
     const radius = randomPos()
     const touchObj = new Touch({
       identifier: Date.now(),
@@ -111,22 +108,21 @@
     target.dispatchEvent(touchEvent)
   }
 
-  async function swipe (target, origin = [.5, .5], end = [100, 100]) {
-    const [x, y] = end
-    const tRect = target.getBoundingClientRect()
-    const startX = Math.floor(tRect.x + tRect.width / 2)
-    const startY = Math.floor(tRect.y + tRect.height / 2)
-    const endX = startX + x
-    const endY = startY + y
+  async function swipe (target, start = [.5, .5], end = [100, 100]) {
+    const [sx, sy] = start 
+    const [ex, ey] = end 
+    const { x, y, width, height } = target.getBoundingClientRect()
+    const startX = Math.floor(x + width * sx)
+    const startY = Math.floor(y + height * sy)
+    const endX = startX + ex
+    const endY = startY + ey
 
-    dbg.extend('swipe')('Simulate user swipe on target:', target)
+    dbg.extend('swipe')('Simulate user swipe on target:', { startX, startY, endX, endY }, target)
 
     touchEvent(startX, startY, target, 'touchstart')
-    await delay()
     touchEvent(startX, startY, target, 'touchmove')
-    await delay()
+    await delay(100, 140)
     touchEvent(endX, endY, target, 'touchmove')
-    await delay()
     touchEvent(endX, endY, target, 'touchend')
   }
 

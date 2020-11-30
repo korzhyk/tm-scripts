@@ -39,14 +39,29 @@
     attr(name) {
       return this.then(el => el && el.getAttribute(name))
     }
+
+    on(event, handler) {
+      return this.then(el => {
+        el && el.addEventListener && el.addEventListener(event, handler)
+        return el
+      })
+    }
+    
+    off(event, handler) {
+      return this.then(el => {
+        el && el.removeEventListener && el.removeEventListener(event, handler)
+        return el
+      }
+    }
   }
-  
+
   Object.assign(window, { Utils: {
     HTML: {
       isHidden,
       isVisible,
       injectStyle,
-      Selector
+      Selector,
+      ce
     },
     Array: {
       shuffle: shuffleArray,

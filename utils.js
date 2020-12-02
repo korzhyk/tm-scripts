@@ -129,11 +129,11 @@
   }
 
   function isHidden(el) {
-    return el ? el.offsetParent === null : true
+    return !isVisible(el)
   }
 
   function isVisible(el) {
-    return !isHidden(el)
+    return el && (el.offsetParent !== null || el.style.display !== 'none' || el.style.visibility !== 'hidden')
   }
 
   function ce (tagName, attrs, innerHTML) {

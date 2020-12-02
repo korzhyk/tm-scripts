@@ -32,6 +32,11 @@
       return this.then(el => Selector.findAll(selector, el))
     }
 
+    wait (selector, ...args) {
+      return Selector.resolve()
+      Selector.resolve(this.then(el => until(() => Selector.find(selector, el), ...args)))
+    }
+
     text() {
       return this.then(el => (el ? el.innerText : ''))
     }

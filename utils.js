@@ -46,7 +46,7 @@
         return el
       })
     }
-    
+
     off(event, handler) {
       return this.then(el => {
         el && el.removeEventListener && el.removeEventListener(event, handler)
@@ -165,4 +165,4 @@
       return items ? items[items.length * Math.random() | 0] : null
   }
 
-})(unsafeWindow)
+})(unsafeWindow);

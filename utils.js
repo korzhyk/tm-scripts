@@ -125,7 +125,14 @@
   }
 
   function invoked (name, value = true) {
-    return sessionStorage[name] ? null : (sessionStorage[name] = JSON.stringify(value))
+    if (sessionStorage[name]) {
+      try {
+        const json = JSON.parse(sessionStorage[name])
+        return json
+      } catch (e) { return value }
+    }
+    sessionStorage[name] = JSON.stringify(value)
+    return false
   }
 
   function isHidden(el) {

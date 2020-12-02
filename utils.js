@@ -1,4 +1,4 @@
-;(function (window){
+;(function (){
   class Selector extends Promise {
     get [Symbol.toStringTag]() {
       return 'Selector'
@@ -181,4 +181,4 @@
       return items ? items[items.length * Math.random() | 0] : null
   }
 
-})(unsafeWindow);
+})();

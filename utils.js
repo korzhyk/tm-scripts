@@ -13,7 +13,7 @@
     }
 
     static findAll(selector = '', parent = document) {
-      return Promise.resolve(parent && parent.querySelectorAll(selector))
+      return SelectorMulti.resolve(parent && parent.querySelectorAll(selector))
     }
 
     static wait(selector, ...args) {
@@ -21,7 +21,7 @@
     }
 
     static waitAll(selector, ...args) {
-      return until(() => Selector.findAll(selector).then(els => els.length && els), ...args)
+      return SelectorMulti.resolve(until(() => Selector.findAll(selector).then(els => els.length && els), ...args))
     }
 
     find(selector) {
@@ -29,7 +29,9 @@
     }
 
     findAll(selector) {
-      return this.then(el => Selector.findAll(selector, el))
+      return SelectorMulti.resolve(
+        this.then(el => Selector.findAll(selector, el))
+      )
     }
 
     wait (selector, ...args) {
@@ -64,6 +66,29 @@
     }
   }
 
+  class SelectorMulti extends Promise {
+    get [Symbol.toStringTag]() {
+      return 'SelectorMulti'
+    }
+
+    static get [Symbol.species]() {
+      return Promise
+    }
+
+    forEach (callback) {
+      return SelectorMulti.resolve(this.then(els => {
+        els.forEach(callback)
+        return els
+      }))
+    }
+
+    map (callback) {
+      return SelectorMulti.resolve(
+        this.then(els => Promise.all(Array.prototype.map.call(els, callback)))
+      )
+    }
+  }
+
   Object.assign(window, { Utils: {
     HTML: {
       isHidden,
@@ -85,8 +110,47 @@
     sleep,
     until,
     invoked,
-    debug
+    debug,
+    parseDate: parseDateFactory(),
+    parseMoney: parseMoneyFactory()
   }})
+
+  function parseDateFactory (timezoneRx = /\w+$/) {
+    const tzReplace = {
+      CST: +8,
+      EET: 2,
+      MSK: 3,
+      PST: -8
+    }
+    return function parseDate (str = '', date = new Date()) {
+      str = str.trim()
+      if (isNaN(+str)) {
+        const match = str.match(timezoneRx)
+        const tz = match && match[0]
+        if (tzReplace.hasOwnProperty(tz)) {
+          const timezone = tzReplace[tz]
+          const negative = timezone < 0
+          let replace = negative ? '-' : '+'
+          replace += String(Math.abs(timezone)).padStart(2, '0')
+          replace = String(replace).padEnd(5, '0')
+          str = str.replace(timezoneRx, replace)
+        }
+        if (!~str.indexOf(date.getFullYear())) {
+          str += ' ' + date.getFullYear()
+        }
+      } else {
+        str = +str
+      }
+      const result = new Date(str)
+      return result == 'Invalid Date' ? null : result
+    }
+  }
+
+  function parseMoneyFactory (digitsRx = /[^0-9\.,]/g) {
+    return function parseMoney (str = '') {
+      return Number(str.replace(digitsRx, '').replace(',', '.'))
+    }
+  }
 
   function debug (namespace = '') {
     const ts = window.performance.now()

@@ -43,7 +43,7 @@
 
   function fill (field, value) {
     if (!field) return
-    dbg.extend('fill')(`Fill "${field.type}" type field with:`, value)
+    dbg.extend('fill')(`Fill "${field.type}":`, value)
     field.dispatchEvent(focusEvent)
     switch (field.type) {
       case 'select-one':
@@ -66,7 +66,7 @@
   }
 
   function click (target) {
-    dbg.extend('click')('Click event on target:', target)
+    dbg.extend('click')('Click on:', target)
     target.dispatchEvent(clickEvent)
   }
 
@@ -77,7 +77,7 @@
     const x = calcOffset(width, offsetX, left)
     const y = calcOffset(height, offsetY, top)
     
-    dbg.extend('touch')('Touch event at pos:', { x, y }, 'and target:', target)
+    dbg.extend('touch')('Touch at:', { x, y }, 'on:', target)
 
     touchEvent(x, y, target, 'touchstart')
     touchEvent(x, y, target, 'touchend')
@@ -117,7 +117,7 @@
     const endX = startX + ex
     const endY = startY + ey
 
-    dbg.extend('swipe')('Simulate user swipe on target:', { startX, startY, endX, endY }, target)
+    dbg.extend('swipe')('Swipe at:', { startX, startY, endX, endY }, 'on:' target)
 
     touchEvent(startX, startY, target, 'touchstart')
     touchEvent(startX, startY, target, 'touchmove')

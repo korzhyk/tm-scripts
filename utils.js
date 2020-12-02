@@ -41,17 +41,21 @@
     }
 
     on(event, handler) {
-      return this.then(el => {
-        el && el.addEventListener && el.addEventListener(event, handler)
-        return el
-      })
+      return this.then(el => (
+        el &&
+        el.addEventListener &&
+        el.addEventListener(event, handler),
+        el)
+      )
     }
 
     off(event, handler) {
-      return this.then(el => {
-        el && el.removeEventListener && el.removeEventListener(event, handler)
-        return el
-      }
+      return this.then(el => (
+        el &&
+        el.removeEventListener &&
+        el.removeEventListener(event, handler),
+        el)
+      )
     }
   }
 

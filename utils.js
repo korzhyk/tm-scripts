@@ -93,7 +93,7 @@
       namespace,
       '',
       ...args)
-    log.extend = m => Debug(namespace + ':' + m)
+    log.extend = m => debug(namespace + ':' + m)
     return log
   }
 

@@ -9,6 +9,7 @@
       fill,
       swipe,
       tap,
+      multiTap,
       touchEvent
     }
   })
@@ -81,6 +82,52 @@
 
     touchEvent(x, y, target, 'touchstart')
     touchEvent(x, y, target, 'touchend')
+  }
+
+  function multiTap (target, options = [.5, .5], count = 1) {
+
+    const { left, top, width, height } = target.getBoundingClientRect()
+    const [ offsetX, offsetY ] = options
+
+    const x = calcOffset(width, offsetX, left)
+    const y = calcOffset(height, offsetY, top)
+
+    dbg.extend('touch')('Multi touch at:', { x, y }, 'on:', target)
+
+    const touches = []
+
+    while (touches.length <= count) {
+      touches.push(
+        new Touch({
+          identifier: Date.now(),
+          target,
+          clientX: x + randomPos(),
+          clientY: y + randomPos(),
+          radiusX: randomPos(),
+          radiusY: randomPos(),
+          rotationAngle: Utils.Math.random(2, 9),
+          force: 0.1 * Utils.Math.random(1, 9)
+        })
+      )
+    }
+
+    target.dispatchEvent(new TouchEvent('touchstart', {
+      cancelable: true,
+      bubbles: true,
+      touches: touches,
+      targetTouches: [],
+      changedTouches: touches,
+      shiftKey: true
+    }))
+
+    target.dispatchEvent(new TouchEvent('touchend', {
+      cancelable: true,
+      bubbles: true,
+      touches: touches,
+      targetTouches: [],
+      changedTouches: touches,
+      shiftKey: true
+    }))
   }
 
   function touchEvent(x, y, target, eventType) {

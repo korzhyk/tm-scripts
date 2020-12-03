@@ -1,5 +1,5 @@
 // @require https://raw.githubusercontent.com/korzhyk/tm-scripts/test/utils.js
-;(function (window){
+;(function (){
   const dbg = Utils.debug('user_actions')
 
   Object.assign(window, {
@@ -117,7 +117,7 @@
     const endX = startX + ex
     const endY = startY + ey
 
-    dbg.extend('swipe')('Swipe at:', { startX, startY, endX, endY }, 'on:' target)
+    dbg.extend('swipe')('Swipe at:', { startX, startY, endX, endY }, 'on:', target)
 
     touchEvent(startX, startY, target, 'touchstart')
     touchEvent(startX, startY, target, 'touchmove')
@@ -126,4 +126,4 @@
     touchEvent(endX, endY, target, 'touchend')
   }
 
-})(unsafeWindow);
+})();

@@ -191,11 +191,30 @@
   function invoked (name, value = true) {
     if (sessionStorage[name]) {
       try {
-        const json = JSON.parse(sessionStorage[name])
+        const json = JSON.parse(sessionStorage[name], (key, value) => {
+          if(typeof value === 'object' && value !== null && value.__dataType) {
+            switch (value.__dataType) {
+              case 'Map':
+                return new Map(value.__value)
+              default:
+                return value
+            }
+          }
+          return value
+        })
         return json
       } catch (e) { return value }
     }
-    sessionStorage[name] = JSON.stringify(value)
+    sessionStorage[name] = JSON.stringify(value, (key, value) => {
+      if(this[key] instanceof Map) {
+        return {
+          __dataType: 'Map',
+          __value: [...this[key]]
+        }
+      } else {
+        return value
+      }
+    })
     return false
   }
 

@@ -67,11 +67,13 @@
   }
 
   function click (target) {
+    if (!target) return
     dbg.extend('click')('Click on:', target)
     target.dispatchEvent(clickEvent)
   }
 
   function tap (target, options = [.5, .5]) {
+    if (!target) return
     const { left, top, width, height } = target.getBoundingClientRect()
     const [ offsetX, offsetY ] = options
 
@@ -85,7 +87,7 @@
   }
 
   function multiTap (target, options = [.5, .5], count = 1) {
-
+    if (!target) return
     const { left, top, width, height } = target.getBoundingClientRect()
     const [ offsetX, offsetY ] = options
 
@@ -131,6 +133,7 @@
   }
 
   function touchEvent(x, y, target, eventType) {
+    if (!target) return
     const radius = randomPos()
     const touchObj = new Touch({
       identifier: Date.now(),
@@ -156,6 +159,7 @@
   }
 
   async function swipe (target, start = [.5, .5], end = [100, 100]) {
+    if (!target) return
     const [sx, sy] = start 
     const [ex, ey] = end 
     const { x, y, width, height } = target.getBoundingClientRect()

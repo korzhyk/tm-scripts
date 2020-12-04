@@ -35,8 +35,7 @@
     }
 
     wait (selector, ...args) {
-      return Selector.resolve()
-      Selector.resolve(this.then(el => until(() => Selector.find(selector, el), ...args)))
+      return Selector.resolve(this.then(el => until(() => Selector.find(selector, el), ...args)))
     }
 
     text() {

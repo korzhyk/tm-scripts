@@ -120,7 +120,7 @@
       CST: +8,
       EET: 2,
       MSK: 3,
-      PST: -8
+      PT: -8
     }
     return function parseDate (str = '', date = new Date()) {
       str = str.trim()

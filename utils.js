@@ -8,12 +8,12 @@
       return Promise
     }
 
-    static find(selector = '', parent = document) {
-      return Selector.resolve(parent && parent.querySelector(selector))
+    static find(selector = '', parent) {
+      return Selector.resolve((parent || document).querySelector(selector))
     }
 
-    static findAll(selector = '', parent = document) {
-      return SelectorMulti.resolve(parent && parent.querySelectorAll(selector))
+    static findAll(selector = '', parent) {
+      return SelectorMulti.resolve((parent || document).querySelectorAll(selector))
     }
 
     static wait(selector, ...args) {
@@ -74,6 +74,10 @@
       return Promise
     }
 
+    count () {
+      return this.then(els => els.length)
+    }
+
     forEach (callback) {
       return SelectorMulti.resolve(this.then(els => {
         els.forEach(callback)
@@ -111,8 +115,16 @@
     invoked,
     debug,
     parseDate: parseDateFactory(),
-    parseMoney: parseMoneyFactory()
+    parseMoney: parseMoneyFactory(),
+    parseTime: parseTimeFactory()
   }})
+
+  function parseTimeFactory (whiteSpaceRx = /[\s\n\t]/gm) {
+    return function parseTime (str = '', delimiter = ':') {
+      str = String(str).replace(whiteSpaceRx, '')
+      return str.split(delimiter).reverse().reduce(($, n, i) => $ + n * Math.pow(60, i), 0)
+    }
+  }
 
   function parseDateFactory (timezoneRx = /\w+$/) {
     const tzReplace = {

@@ -1,9 +1,6 @@
 ;(function (){
-  class Selector extends Promise {
-    get [Symbol.toStringTag]() {
-      return 'Selector'
-    }
 
+  class Selector extends Promise {
     static get [Symbol.species]() {
       return Promise
     }
@@ -21,7 +18,9 @@
     }
 
     static waitAll(selector, ...args) {
-      return SelectorMulti.resolve(until(() => Selector.findAll(selector).then(els => els.length && els), ...args))
+      return SelectorMulti.resolve(
+        until(() => Selector.findAll(selector).then(els => els.length && els), ...args)
+      )
     }
 
     find(selector) {
@@ -66,10 +65,6 @@
   }
 
   class SelectorMulti extends Promise {
-    get [Symbol.toStringTag]() {
-      return 'SelectorMulti'
-    }
-
     static get [Symbol.species]() {
       return Promise
     }
@@ -178,11 +173,11 @@
   }
 
 
-  function sleep (timeout=1) {
+  function sleep (timeout = 1) {
     return new Promise(resolve => setTimeout(resolve, timeout < 100 ? timeout * 1e3 : timeout))
   }
 
-  function until(fn, until = Infinity, timeout = 333) {
+  function until (fn, until = Infinity, timeout = 333) {
     return new Promise(resolve => {
       const frametime = 1000 / 30
       if (until < frametime) {
@@ -207,6 +202,8 @@
             switch (value.__dataType) {
               case 'Map':
                 return new Map(value.__value)
+              case 'Set':
+                return new Set(value.__value)
               default:
                 return value
             }
@@ -216,25 +213,28 @@
         return json
       } catch (e) { return value }
     }
-    sessionStorage[name] = JSON.stringify(value, (key, value) => {
-      if(this[key] instanceof Map) {
+    sessionStorage[name] = JSON.stringify(value, function (key, value) {
+      if(this[key] instanceof Map || this[key] instanceof Set) {
         return {
-          __dataType: 'Map',
+          __dataType: this[key].constructor.name,
           __value: [...this[key]]
         }
-      } else {
-        return value
       }
+      return value
     })
     return false
   }
 
-  function isHidden(el) {
+  function isHidden (el) {
     return !isVisible(el)
   }
 
-  function isVisible(el) {
-    return el && (el.offsetParent !== null || el.style.display !== 'none' || el.style.visibility !== 'hidden')
+  function isVisible (el) {
+    return el && (
+        el.offsetParent !== null ||
+        el.style.display !== 'none' ||
+        el.style.visibility !== 'hidden'
+      )
   }
 
   function ce (tagName, attrs, innerHTML) {
@@ -252,27 +252,30 @@
     document.head.appendChild(style)
   }
 
-  function guid(length = 16) {
-      const buf = []
-      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
-          
-      for (let i = 0, l = chars.length; i < length; i++) {
-          buf[i] = chars.charAt(Math.floor(Math.random() * l))
-      }
+  const $hexDict = 'abcdef0123456789'
+  const $plainDict = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+
+  function guid (length = 16, dict = $plainDict) {
+      const l = dict.length
+      let r = ''
       
-      return buf.join('')
+      while (length--) {
+        r += dict.charAt(l * Math.random() | 0)
+      }
+
+      return r
   }
 
-  function shuffleArray(arr){
+  function shuffleArray (arr){
     return arr.sort(() => Math.floor(Math.random() * Math.floor(3)) - 1)
   }
 
-  function randomInteger(min, max) {
+  function randomInteger (min, max) {
     return Math.round(min - 0.5 + Math.random() * (max - min + 1))
   }
 
   function randomItem (items) {
-      return items ? items[items.length * Math.random() | 0] : null
+      return items && items[items.length * Math.random() | 0] || null
   }
 
 })();

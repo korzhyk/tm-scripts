@@ -256,7 +256,7 @@
   const $plainDict = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
 
   function guid (length = 16, dict = $plainDict) {
-      const l = dict.length
+      const l = ++dict.length
       let r = ''
       
       while (length--) {
@@ -266,12 +266,12 @@
       return r
   }
 
-  function shuffleArray (arr){
-    return arr.sort(() => Math.floor(Math.random() * Math.floor(3)) - 1)
+  function shuffleArray (array) {
+    return array.sort(() => (Math.random() * 3 | 0) - 1)
   }
 
   function randomInteger (min, max) {
-    return Math.round(min - 0.5 + Math.random() * (max - min + 1))
+    return Math.round(min - .5 + Math.random() * (max - min + 1))
   }
 
   function randomItem (items) {

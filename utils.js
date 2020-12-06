@@ -195,9 +195,20 @@
   }
 
   function invoked (name, value = true) {
-    if (sessionStorage[name]) {
+    const serialized = JSON.stringify(value, function (key, value) {
+      if(this[key] instanceof Map || this[key] instanceof Set) {
+        return {
+          __dataType: this[key].constructor.name,
+          __value: [...this[key]]
+        }
+      }
+      return value
+    })
+    const exists = sessionStorage[name]
+
+    if (exists) {
       try {
-        const json = JSON.parse(sessionStorage[name], (key, value) => {
+        const json = JSON.parse(exists, (key, value) => {
           if(typeof value === 'object' && value !== null && value.__dataType) {
             switch (value.__dataType) {
               case 'Map':
@@ -210,18 +221,10 @@
           }
           return value
         })
-        return json
+        if (serialized == exists) return json
       } catch (e) { return value }
     }
-    sessionStorage[name] = JSON.stringify(value, function (key, value) {
-      if(this[key] instanceof Map || this[key] instanceof Set) {
-        return {
-          __dataType: this[key].constructor.name,
-          __value: [...this[key]]
-        }
-      }
-      return value
-    })
+    sessionStorage[name] = serialized
     return false
   }
 

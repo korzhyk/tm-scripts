@@ -180,7 +180,7 @@
   function until (fn, until = Infinity, timeout = 333) {
     return new Promise(resolve => {
       const frametime = 1000 / 60
-      
+
       if (until < frametime) {
         until *= 1000 // if `until` < `frametime` at 60fps convert to seconds
       }
@@ -197,36 +197,42 @@
     })
   }
 
-  function invoked (name, value = true) {
-    const serialized = JSON.stringify(value, function (key, value) {
-      if(this[key] instanceof Map || this[key] instanceof Set) {
-        return {
-          __dataType: this[key].constructor.name,
-          __value: [...this[key]]
-        }
+  const jsonSerialize = (key, value) => {
+    if(typeof value === 'object' && value !== null && value.__dataType) {
+      switch (value.__dataType) {
+        case 'Map':
+          return new Map(value.__value)
+        case 'Set':
+          return new Set(value.__value)
+        default:
+          return value
       }
-      return value
-    })
+    }
+    return value
+  }
+
+  function jsonDeserialize (key, value) {
+    if(this[key] instanceof Map || this[key] instanceof Set) {
+      return {
+        __dataType: this[key].constructor.name,
+        __value: [...this[key]]
+      }
+    }
+    return value
+  }
+
+  function invoked (name, value = true) {
+    const serialized = JSON.stringify(value, jsonDeserialize)
     const exists = sessionStorage[name]
 
     if (exists) {
       try {
-        const json = JSON.parse(exists, (key, value) => {
-          if(typeof value === 'object' && value !== null && value.__dataType) {
-            switch (value.__dataType) {
-              case 'Map':
-                return new Map(value.__value)
-              case 'Set':
-                return new Set(value.__value)
-              default:
-                return value
-            }
-          }
-          return value
-        })
-        if (serialized == exists) return json
-      } catch (e) { return value }
+        if (serialized == exists) return JSON.parse(exists, jsonSerialize)
+      } catch (e) {
+        return value
+      }
     }
+    
     sessionStorage[name] = serialized
     return false
   }

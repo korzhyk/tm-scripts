@@ -179,18 +179,21 @@
 
   function until (fn, until = Infinity, timeout = 333) {
     return new Promise(resolve => {
-      const frametime = 1000 / 30
+      const frametime = 1000 / 60
+      
       if (until < frametime) {
-        until *= 1000 // if `until` < `frametime` at 30fps convert to seconds
+        until *= 1000 // if `until` < `frametime` at 60fps convert to seconds
       }
-      let _t,
-        _a = isFinite(until) ? timeout : 0
-      setTimeout(async function _callback() {
+
+      let _t = 0
+      let _a = isFinite(until) ? timeout : 0
+
+      setTimeout(async function _callback () {
         const result = await fn()
         if (result || _t > until) return resolve(result)
         _t += _a
         setTimeout(_callback, timeout)
-      }, (_t = frametime))
+      }, (_t += frametime))
     })
   }
 

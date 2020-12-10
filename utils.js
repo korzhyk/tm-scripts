@@ -62,6 +62,22 @@
         el)
       )
     }
+
+    parent (selector) {
+      if (selector) {
+        return Selector.resolve(this.then(el => {
+          if (!el) return null
+          while ((el = el.parentNode)) {
+            if (typeof el.matches === 'function' && el.matches(selector)) {
+              return el
+            }
+          }
+          return null
+        }))
+      } else {
+        return Selector.resolve(this.then(el => el && el.parentNode))
+      }
+    }
   }
 
   class SelectorMulti extends Promise {

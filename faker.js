@@ -29,6 +29,8 @@
       'gmail.com',
       'aol.com',
       'yahoo.com',
+      'outlook.com',
+      'hotmail.com',
       'protonmail.com',
       'protonmail.ch',
       'yandex.ua',

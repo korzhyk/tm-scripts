@@ -26,23 +26,23 @@
     const lastName = Utils.Array.random(fakeData.lastNames)
     const userName = [firstName, Utils.Math.random(100, 999), lastName].join('')
     const email = userName + '@' + Utils.Array.random([
-      'gmail.com',
-      'aol.com',
-      'yahoo.com',
+      // 'gmail.com',
+      // 'aol.com',
+      // 'yahoo.com',
       'outlook.com',
       'hotmail.com',
       'protonmail.com',
-      'protonmail.ch',
-      'yandex.ua',
-      'yandex.kz',
-      'yandex.com',
-      'yandex.by',
-      'yandex.ru',
-      'ya.ru',
-      'mail.ru',
-      'inbox.ru',
-      'list.ru',
-      'bk.ru'
+      'protonmail.ch'//,
+      // 'yandex.ua',
+      // 'yandex.kz',
+      // 'yandex.com',
+      // 'yandex.by',
+      // 'yandex.ru',
+      // 'ya.ru',
+      // 'mail.ru',
+      // 'inbox.ru',
+      // 'list.ru',
+      // 'bk.ru'
     ])
 
     return {

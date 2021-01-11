@@ -30,7 +30,6 @@
       'yahoo.com',
       'protonmail.com',
       'protonmail.ch',
-      'ya.ru',
       'mail.ru',
       'inbox.ru',
       'list.ru',
